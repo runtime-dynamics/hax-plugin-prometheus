@@ -1,0 +1,67 @@
+name: prometheus-sensor
+version: "0.1.0"
+description: "Sensor that polls Prometheus metrics and publishes threshold-based events to the nervous system"
+author: "Runtime Dynamics"
+license: "Apache-2.0"
+type: mcp
+entrypoint: hax-plugin-prometheus
+api_version: "1"
+min_hyperax_version: "1.0.0"
+integration: sensor
+
+variables:
+  - name: PROMETHEUS_URL
+    type: string
+    required: true
+    secret: false
+    description: "Prometheus server URL (e.g., http://localhost:9090)"
+  - name: PROMETHEUS_USER
+    type: string
+    required: false
+    secret: false
+    description: "Basic auth username (optional)"
+  - name: PROMETHEUS_PASSWORD
+    type: string
+    required: false
+    secret: true
+    description: "Basic auth password (optional)"
+
+tools:
+  - name: query
+    description: "Execute a PromQL instant query"
+    parameters:
+      - name: query
+        type: string
+        required: true
+        description: "PromQL query expression"
+  - name: query_range
+    description: "Execute a PromQL range query"
+    parameters:
+      - name: query
+        type: string
+        required: true
+      - name: start
+        type: string
+        required: true
+        description: "Start time (RFC3339 or relative like -1h)"
+      - name: end
+        type: string
+        required: true
+        description: "End time (RFC3339 or relative like now)"
+      - name: step
+        type: string
+        required: false
+        default: "15s"
+        description: "Query resolution step"
+  - name: list_targets
+    description: "List all scrape targets and their health status"
+    parameters: []
+  - name: list_alerts
+    description: "List active Prometheus alerts"
+    parameters: []
+
+artifacts:
+  darwin/arm64: hax-plugin-prometheus-darwin-arm64.tar.gz
+  darwin/amd64: hax-plugin-prometheus-darwin-amd64.tar.gz
+  linux/amd64: hax-plugin-prometheus-linux-amd64.tar.gz
+  linux/arm64: hax-plugin-prometheus-linux-arm64.tar.gz

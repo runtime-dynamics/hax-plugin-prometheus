@@ -1,0 +1,52 @@
+version: 2
+
+project_name: hax-plugin-prometheus
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: hax-plugin-prometheus
+    main: .
+    binary: hax-plugin-prometheus
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.ShortCommit}}
+      - -X main.date={{.Date}}
+
+archives:
+  - id: default
+    format: tar.gz
+    name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+    files:
+      - hyperax-plugin.yaml
+      - LICENSE*
+      - README*
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+
+release:
+  github:
+    owner: runtime-dynamics
+    name: hax-plugin-prometheus
+  prerelease: auto
